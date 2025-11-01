@@ -464,19 +464,19 @@
                     </div>
                 </div>
             `).join('');
-            // filesToRender.forEach(file => {
-            //     fetch(`/.netlify/functions/download-count?file_name=${encodeURIComponent(file.name)}`)
-            //         .then(res => res.json())
-            //         .then(data => {
-            //             const el = document.getElementById(`count-${file.name}`);
-            //             if (el) el.textContent = data.count;
-            //         })
-            //         .catch(err => {
-            //             console.error(`获取 ${file.name} 下载次数失败:`, err);
-            //             const el = document.getElementById(`count-${file.name}`);
-            //             if (el) el.textContent = '0';
-            //         });
-            // });
+            filesToRender.forEach(file => {
+                fetch(`/.netlify/functions/download-count?file_name=${encodeURIComponent(file.name)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        const el = document.getElementById(`count-${file.name}`);
+                        if (el) el.textContent = data.count;
+                    })
+                    .catch(err => {
+                        console.error(`获取 ${file.name} 下载次数失败:`, err);
+                        const el = document.getElementById(`count-${file.name}`);
+                        if (el) el.textContent = '0';
+                    });
+            });
         }
 
         // 获取文件类型文本
