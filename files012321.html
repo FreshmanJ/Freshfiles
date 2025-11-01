@@ -330,15 +330,16 @@
 
     <script>
         // 文件数据(读取json文件)
-        const files = fetch('files.json')
+        var files = [];
+        fetch('files.json')
             .then(response => response.json())
             .then(data => {
+                console.log('Loaded file data:', data);
+                files = data;
                 renderFiles(data);
                 updateFileStats(data.length, "全部");
             })
             .catch(error => console.error('Error loading file data:', error));
-
-
         // 文件类型图标映射
         const fileIcons = {
             document: "far fa-file-alt",
@@ -405,7 +406,7 @@
                     let filteredFiles = files;
 
                     if (filter !== 'all') {
-                        filteredFiles = files.filter(file => file.type === filter);
+                        filteredFiles = files.filter(file => file.type == filter);
                     }
 
                     // 应用搜索
@@ -414,6 +415,7 @@
                             file.name.toLowerCase().includes(searchTerm)
                         );
                     }
+                    console.log('Filtered files:', filteredFiles);
 
                     renderFiles(filteredFiles);
                     updateFileStats(filteredFiles.length, getFilterText(filter));
@@ -423,6 +425,7 @@
 
         // 渲染文件列表
         function renderFiles(filesToRender) {
+            console.log('Rendering files:', filesToRender);
             const fileListContainer = document.getElementById('fileList');
 
             if (filesToRender.length === 0) {
@@ -447,13 +450,12 @@
                             <span><i class="fas fa-hdd"></i> 大小: ${file.size}</span>
                             <span class="file-type">${getFileTypeText(file.type)}</span>
                         </div>
-                        <!-- 新增更新时间显示 -->
                 <div class="file-info">
                     <span><i class="far fa-clock"></i> 更新: ${file.updated_at}</span>
                 </div>
                 <div class="file-info">
-          <span><i class="fas fa-download"></i> 下载次数: <span id="count-${file.name}">加载中...</span></span>
-        </div>
+                    <span><i class="fas fa-download"></i> 下载次数: <span id="count-${file.name}">加载中...</span></span>
+                </div>
                         <div class="file-actions">
                             <button class="btn btn-primary" onclick="handleDownload('${file.id}', '${file.name}', '${file.url}')">
                             <i class="fas fa-download"></i> 下载
@@ -462,19 +464,19 @@
                     </div>
                 </div>
             `).join('');
-            filesToRender.forEach(file => {
-                fetch(`/.netlify/functions/download-count?file_name=${encodeURIComponent(file.name)}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        const el = document.getElementById(`count-${file.name}`);
-                        if (el) el.textContent = data.count;
-                    })
-                    .catch(err => {
-                        console.error(`获取 ${file.name} 下载次数失败:`, err);
-                        const el = document.getElementById(`count-${file.name}`);
-                        if (el) el.textContent = '0';
-                    });
-            });
+            // filesToRender.forEach(file => {
+            //     fetch(`/.netlify/functions/download-count?file_name=${encodeURIComponent(file.name)}`)
+            //         .then(res => res.json())
+            //         .then(data => {
+            //             const el = document.getElementById(`count-${file.name}`);
+            //             if (el) el.textContent = data.count;
+            //         })
+            //         .catch(err => {
+            //             console.error(`获取 ${file.name} 下载次数失败:`, err);
+            //             const el = document.getElementById(`count-${file.name}`);
+            //             if (el) el.textContent = '0';
+            //         });
+            // });
         }
 
         // 获取文件类型文本
